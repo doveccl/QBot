@@ -39,7 +39,7 @@ namespace BOT {
 
 	bool init(const char *file) {
 		static int ret; ret = 0;
-		srand(time((time_t *)'\0'));
+		srand((unsigned int)time(NULL));
 
 		if (sqlite3_open(file, &db) == SQLITE_OK) {
 			sqlite3_exec(db, sql_init_table, NULL, NULL, NULL);
@@ -113,7 +113,7 @@ namespace BOT {
 		sqlite3_bind_text(stmt_get, 2, msg, -1, SQLITE_STATIC);
 
 		for (row_cnt = 0; sqlite3_step(stmt_get) == SQLITE_ROW; row_cnt++)
-			std::strcpy(
+			strcpy(
 				result[row_cnt],
 				(const char *)sqlite3_column_text(stmt_get, 0)
 			);

@@ -1,19 +1,34 @@
-
-/*
+﻿/*
  * WHResBot Main Function
  * Written by Doveccl
  */
 
 #include "stdafx.h"
+#include "cqp.h"
+
+#ifdef _WIN32
+#define sprintf sprintf_s
+#define strcpy strcpy_s
+#define GET_LOCAL_TIME(buf) do { \
+	time_t t = time(NULL); \
+	tm stm; localtime_s(&stm, &t); \
+	strftime(buf, 20, "%Y-%m-%d %X", &stm); \
+} while(0)
+#else
+#define GET_LOCAL_TIME(buf) do { \
+	time_t t = time(NULL); \
+	tm stm = *localtime(&t); \
+	strftime(buf, 20, "%Y-%m-%d %X", &stm); \
+} while(0)
+#endif
+
+using namespace std;
 
 #include "appmain.h"
-#include "cqp.h"
 
 #define REG_ADD "^/add ([^#]+)#(.+)$"
 #define REG_DEL "^/del ([^#]+)#(.+)$"
 #define REG_GET "^/get ([^#]+)#(.+)$"
-
-using namespace std;
 
 int ac = -1, ret;
 bool enabled = false;
@@ -120,9 +135,7 @@ CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t sendTime, int64_t
 		sprintf(buf, "%d", rand());
 		CQ_sendGroupMsg(ac, fromGroup, buf);
 	} else if (strcmp(msg, "/time") == 0) {
-		time_t now = time(NULL);
-		tm tstruct = *localtime(&now);
-		strftime(buf, 20, "%Y-%m-%d %X", &tstruct);
+		GET_LOCAL_TIME(buf);
 		CQ_sendGroupMsg(ac, fromGroup, buf);
 	} else if (strcmp(msg, "/about") == 0) {
 		CQ_sendGroupMsg(ac, fromGroup, APP_INFO);
