@@ -75,6 +75,7 @@ try {
     config = {
         server_port: 11235,
         local_port: 11666,
+        ignore_qq: [1000000],
         black_list: []
     }
     let conf_str = JSON.stringify(config)
@@ -86,8 +87,8 @@ app.on('GroupMessage', async data => {
     let qq = data.fromQQ
     let msg = encrypt(data.content)
 
-    if (qq == 1000000) {
-        return null //system message
+    if (config.ignore_qq.indexOf(qq) != -1) {
+        return 'not check msg from ignored qq'
     }
 
     if (data.content === '/help') {
