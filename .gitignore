@@ -1,6 +1,7 @@
 # custom
 *.DS_Store
-app
+config.json
+bot.db
 
 # Logs
 logs

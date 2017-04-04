@@ -19,6 +19,7 @@
     "node-coolq": "latest",
     "node-uuid": "latest",
     "sqlite": "latest",
+    "iconv": "latest",
     "uuid": "latest"
   },
   "private": true

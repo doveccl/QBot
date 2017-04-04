@@ -1,15 +1,13 @@
+import {writeFileSync} from 'fs'
 import {Api, Client} from 'node-coolq'
 import {DB} from './db.js'
 
-let db = new DB(__dirname + '/bot.db')
+let db = new DB('bot.db')
 
 let app = new Client()
 let api = new Api(app)
 let code = api.getCode()
 let at = q => code.getAt(q)
-
-let server_port = 11235
-let local_port = 11666
 
 let CQCode_reg = /\[[^\[]*\]/g
 let add_reg = /^[/!]add ([^=]+)=([\S\s]+)$/
@@ -40,6 +38,8 @@ let add_w = (q, k, v) =>
     `${at(q)} 规则 “${k}” => “${v}” 已经存在`
 let add_e = (q, k, v) =>
     `${at(q)} 规则 “${k}” => “${v}” 添加失败，请重试`
+let add_b = (q, k) =>
+    `${at(q)} 关键词 “${k}” 在黑名单中，不可添加`
 
 let del_s = (q, k, v) =>
     `${at(q)} 规则 “${k}” => “${v}” 删除成功`
@@ -67,6 +67,19 @@ let list_s = (q, k, r) => {
     return s
 }
 
+let config
+try {
+    config = require('config.json')
+} catch (err) {
+    config = {
+        server_port: 11235,
+        local_port: 11666,
+        black_list: []
+    }
+    let conf_str = JSON.stringify(config)
+    writeFileSync('config.json', conf_str)
+}
+
 app.on('GroupMessage', async data => {
     let gid = data.group
     let qq = data.fromQQ
@@ -83,7 +96,9 @@ app.on('GroupMessage', async data => {
         let $1 = decrypt($[1])
         let $2 = decrypt($[2])
 
-        if (await db.has(gid, $1, $2)) {
+        if (config.black_list.indexOf($1) != -1) {
+            await api.GroupMessage(gid, add_b(qq, $1))
+        } else if (await db.has(gid, $1, $2)) {
             await api.GroupMessage(gid, add_w(qq, $1, $2))
         } else if (await db.add(gid, $1, $2)) {
             await api.GroupMessage(gid, add_s(qq, $1, $2))
@@ -131,4 +146,7 @@ app.on('GroupMessage', async data => {
     }
 })
 
-app.listen(server_port, local_port)
+app.listen(
+    config.server_port,
+    config.local_port
+)
