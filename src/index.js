@@ -1,4 +1,4 @@
-import {writeFileSync} from 'fs'
+import {readFileSync, writeFileSync} from 'fs'
 import {Api, Client} from 'node-coolq'
 import {DB} from './db.js'
 
@@ -69,7 +69,8 @@ let list_s = (q, k, r) => {
 
 let config, confile = `${__dirname}/config.json`
 try {
-    config = require(confile)
+    config = readFileSync(confile)
+    config = JSON.parse(config)
 } catch (err) {
     config = {
         server_port: 11235,

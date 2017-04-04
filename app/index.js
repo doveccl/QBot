@@ -85,7 +85,8 @@ var list_s = function list_s(q, k, r) {
 var config = void 0,
     confile = __dirname + '/config.json';
 try {
-    config = require(confile);
+    config = (0, _fs.readFileSync)(confile);
+    config = JSON.parse(config);
 } catch (err) {
     config = {
         server_port: 11235,
