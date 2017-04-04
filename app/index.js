@@ -8,7 +8,7 @@ var _db = require('./db.js');
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-var db = new _db.DB('bot.db');
+var db = new _db.DB(__dirname + '/bot.db');
 
 var app = new _nodeCoolq.Client();
 var api = new _nodeCoolq.Api(app);
@@ -82,9 +82,10 @@ var list_s = function list_s(q, k, r) {
     return s;
 };
 
-var config = void 0;
+var config = void 0,
+    confile = __dirname + '/config.json';
 try {
-    config = require('config.json');
+    config = require(confile);
 } catch (err) {
     config = {
         server_port: 11235,
@@ -92,7 +93,7 @@ try {
         black_list: []
     };
     var conf_str = JSON.stringify(config);
-    (0, _fs.writeFileSync)('config.json', conf_str);
+    (0, _fs.writeFileSync)(confile, conf_str);
 }
 
 app.on('GroupMessage', function () {

@@ -2,7 +2,7 @@ import {writeFileSync} from 'fs'
 import {Api, Client} from 'node-coolq'
 import {DB} from './db.js'
 
-let db = new DB('bot.db')
+let db = new DB(`${__dirname}/bot.db`)
 
 let app = new Client()
 let api = new Api(app)
@@ -67,9 +67,9 @@ let list_s = (q, k, r) => {
     return s
 }
 
-let config
+let config, confile = `${__dirname}/config.json`
 try {
-    config = require('config.json')
+    config = require(confile)
 } catch (err) {
     config = {
         server_port: 11235,
@@ -77,7 +77,7 @@ try {
         black_list: []
     }
     let conf_str = JSON.stringify(config)
-    writeFileSync('config.json', conf_str)
+    writeFileSync(confile, conf_str)
 }
 
 app.on('GroupMessage', async data => {
