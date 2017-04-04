@@ -12,7 +12,11 @@ const sql_get = `${sql_list} LIMIT 1 OFFSET ?`
 
 export class DB {
     constructor(file) {
-        db.open(file)
+        Promise.resolve()
+            .then(() => db.open('file', { Promise }))
+            .then(() => db.run(sql_creat))
+            .catch(err => console.error(err.stack))
+            .finally(() => console.log('DB: OK'));
     }
 
     async has(gid, key, value) {
