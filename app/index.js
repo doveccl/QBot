@@ -91,6 +91,7 @@ try {
     config = {
         server_port: 11235,
         local_port: 11666,
+        ignore_qq: [1000000],
         black_list: []
     };
     var conf_str = JSON.stringify(config);
@@ -109,12 +110,12 @@ app.on('GroupMessage', function () {
                         qq = data.fromQQ;
                         msg = encrypt(data.content);
 
-                        if (!(qq == 1000000)) {
+                        if (!(config.ignore_qq.indexOf(qq) != -1)) {
                             _context.next = 5;
                             break;
                         }
 
-                        return _context.abrupt('return', null);
+                        return _context.abrupt('return', 'not check msg from ignored qq');
 
                     case 5:
                         if (!(data.content === '/help')) {
