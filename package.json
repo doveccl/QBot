@@ -1,0 +1,25 @@
+{
+  "name": "qbot",
+  "version": "2.0.0",
+  "description": "Auto-reply bot plugin for CoolQ",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "babel src -d app",
+    "run": "node app/index.js",
+    "start": "babel src -d app && node app/index.js"
+  },
+  "keywords": [
+    "qq",
+    "bot"
+  ],
+  "author": "Doveccl",
+  "license": "MIT",
+  "dependencies": {
+    "node-coolq": "latest",
+    "node-uuid": "latest",
+    "sqlite": "latest",
+    "uuid": "latest"
+  },
+  "private": true
+}
