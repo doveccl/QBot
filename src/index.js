@@ -12,10 +12,10 @@ let server_port = 11235
 let local_port = 11666
 
 let CQCode_reg = /\[[^\[]*\]/g
-let add_reg = /^\/add ([^=]+)=([\S\s]+)$/
-let del_reg = /^\/del ([^=]+)=([\S\s]+)$/
-let get_reg = /^\/get#(\d+) ([^=]+)$/
-let list_reg = /^\/list ([\S\s]+)$/
+let add_reg = /^[/!]add ([^=]+)=([\S\s]+)$/
+let del_reg = /^[/!]del ([^=]+)=([\S\s]+)$/
+let get_reg = /^[/!]get#(\d+) ([^=]+)$/
+let list_reg = /^[/!]list ([\S\s]+)$/
 
 let encrypt = str =>
     str.replace(CQCode_reg, str =>
@@ -26,7 +26,7 @@ let decrypt = str =>
         str.replace('~', '=')
     )
 
-const SHOW_MAX_RULES = 10
+const SHOW_MAX_RULES = 20
 const MSG_HELP = `QBot 使用帮助：
 /add key=value，为关键词 key 添加一条自动回复规则 value
 /del key=value，为关键词 key 闪出一条自动回复规则 value
