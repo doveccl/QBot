@@ -27,7 +27,7 @@ let decrypt = str =>
 const SHOW_MAX_RULES = 20
 const MSG_HELP = `QBot 使用帮助：
 /add key=value，为关键词 key 添加一条自动回复规则 value
-/del key=value，为关键词 key 闪出一条自动回复规则 value
+/del key=value，为关键词 key 删除一条自动回复规则 value
 /list key，列出关键词 key 对应的规则（至多列出 ${SHOW_MAX_RULES} 条）
 /get#i key，列出关键词 key 对应的第 i 条规则（i 是从 0 开始的数字）
 /help 获取使用帮助`
