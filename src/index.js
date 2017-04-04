@@ -76,11 +76,27 @@ try {
         server_port: 11235,
         local_port: 11666,
         ignore_qq: [1000000],
-        black_list: []
+        black_list: [],
+        welcome: '欢迎加入本群！',
+        leave: '离开了本群'
     }
     let conf_str = JSON.stringify(config)
     writeFileSync(confile, conf_str)
 }
+
+app.on('GroupMemberIncrease', async data => {
+    let gid = data.group
+    let qq = data.beingOperateQQ
+    let msg = `${at(qq)} ${config.welcome}`
+    await api.GroupMessage(gid, msg)
+})
+
+app.on('GroupMemberDecrease', async data => {
+    let gid = data.group
+    let qq = data.beingOperateQQ
+    let msg = `QQ:[${qq}] ${config.leave}`
+    await api.GroupMessage(gid, msg)
+})
 
 app.on('GroupMessage', async data => {
     let gid = data.group

@@ -92,243 +92,28 @@ try {
         server_port: 11235,
         local_port: 11666,
         ignore_qq: [1000000],
-        black_list: []
+        black_list: [],
+        welcome: '欢迎加入本群！',
+        leave: '离开了本群'
     };
     var conf_str = JSON.stringify(config);
     (0, _fs.writeFileSync)(confile, conf_str);
 }
 
-app.on('GroupMessage', function () {
+app.on('GroupMemberIncrease', function () {
     var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(data) {
-        var gid, qq, msg, $, $1, $2, _$, _$2, _$3, _$4, _$5, _$6, r, _$7, _$8, _r, _r2;
-
+        var gid, qq, msg;
         return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
                 switch (_context.prev = _context.next) {
                     case 0:
                         gid = data.group;
-                        qq = data.fromQQ;
-                        msg = encrypt(data.content);
-
-                        if (!(config.ignore_qq.indexOf(qq) != -1)) {
-                            _context.next = 5;
-                            break;
-                        }
-
-                        return _context.abrupt('return', 'not check msg from ignored qq');
+                        qq = data.beingOperateQQ;
+                        msg = at(qq) + ' ' + config.welcome;
+                        _context.next = 5;
+                        return api.GroupMessage(gid, msg);
 
                     case 5:
-                        if (!(data.content === '/help')) {
-                            _context.next = 10;
-                            break;
-                        }
-
-                        _context.next = 8;
-                        return api.GroupMessage(gid, MSG_HELP);
-
-                    case 8:
-                        _context.next = 96;
-                        break;
-
-                    case 10:
-                        if (!add_reg.test(msg)) {
-                            _context.next = 37;
-                            break;
-                        }
-
-                        $ = msg.match(add_reg);
-                        $1 = decrypt($[1]);
-                        $2 = decrypt($[2]);
-
-                        if (!(config.black_list.indexOf($1) != -1)) {
-                            _context.next = 19;
-                            break;
-                        }
-
-                        _context.next = 17;
-                        return api.GroupMessage(gid, add_b(qq, $1));
-
-                    case 17:
-                        _context.next = 35;
-                        break;
-
-                    case 19:
-                        _context.next = 21;
-                        return db.has(gid, $1, $2);
-
-                    case 21:
-                        if (!_context.sent) {
-                            _context.next = 26;
-                            break;
-                        }
-
-                        _context.next = 24;
-                        return api.GroupMessage(gid, add_w(qq, $1, $2));
-
-                    case 24:
-                        _context.next = 35;
-                        break;
-
-                    case 26:
-                        _context.next = 28;
-                        return db.add(gid, $1, $2);
-
-                    case 28:
-                        if (!_context.sent) {
-                            _context.next = 33;
-                            break;
-                        }
-
-                        _context.next = 31;
-                        return api.GroupMessage(gid, add_s(qq, $1, $2));
-
-                    case 31:
-                        _context.next = 35;
-                        break;
-
-                    case 33:
-                        _context.next = 35;
-                        return api.GroupMessage(gid, add_e(qq, $1, $2));
-
-                    case 35:
-                        _context.next = 96;
-                        break;
-
-                    case 37:
-                        if (!del_reg.test(msg)) {
-                            _context.next = 59;
-                            break;
-                        }
-
-                        _$ = msg.match(del_reg);
-                        _$2 = decrypt(_$[1]);
-                        _$3 = decrypt(_$[2]);
-                        _context.next = 43;
-                        return db.has(gid, _$2, _$3);
-
-                    case 43:
-                        if (_context.sent) {
-                            _context.next = 48;
-                            break;
-                        }
-
-                        _context.next = 46;
-                        return api.GroupMessage(gid, del_w(qq, _$2, _$3));
-
-                    case 46:
-                        _context.next = 57;
-                        break;
-
-                    case 48:
-                        _context.next = 50;
-                        return db.del(gid, _$2, _$3);
-
-                    case 50:
-                        if (!_context.sent) {
-                            _context.next = 55;
-                            break;
-                        }
-
-                        _context.next = 53;
-                        return api.GroupMessage(gid, del_s(qq, _$2, _$3));
-
-                    case 53:
-                        _context.next = 57;
-                        break;
-
-                    case 55:
-                        _context.next = 57;
-                        return api.GroupMessage(gid, del_e(qq, _$2, _$3));
-
-                    case 57:
-                        _context.next = 96;
-                        break;
-
-                    case 59:
-                        if (!get_reg.test(msg)) {
-                            _context.next = 75;
-                            break;
-                        }
-
-                        _$4 = msg.match(get_reg);
-                        _$5 = decrypt(_$4[1]);
-                        _$6 = decrypt(_$4[2]);
-                        _context.next = 65;
-                        return db.get(gid, _$6, _$5);
-
-                    case 65:
-                        r = _context.sent;
-
-                        if (!(r === undefined)) {
-                            _context.next = 71;
-                            break;
-                        }
-
-                        _context.next = 69;
-                        return api.GroupMessage(gid, get_e(qq, _$6, _$5));
-
-                    case 69:
-                        _context.next = 73;
-                        break;
-
-                    case 71:
-                        _context.next = 73;
-                        return api.GroupMessage(gid, get_s(qq, _$6, _$5, r));
-
-                    case 73:
-                        _context.next = 96;
-                        break;
-
-                    case 75:
-                        if (!list_reg.test(msg)) {
-                            _context.next = 90;
-                            break;
-                        }
-
-                        _$7 = msg.match(list_reg);
-                        _$8 = decrypt(_$7[1]);
-                        _context.next = 80;
-                        return db.list(gid, _$8);
-
-                    case 80:
-                        _r = _context.sent;
-
-                        if (!(_r.length == 0)) {
-                            _context.next = 86;
-                            break;
-                        }
-
-                        _context.next = 84;
-                        return api.GroupMessage(gid, list_e(qq, _$8));
-
-                    case 84:
-                        _context.next = 88;
-                        break;
-
-                    case 86:
-                        _context.next = 88;
-                        return api.GroupMessage(gid, list_s(qq, _$8, _r));
-
-                    case 88:
-                        _context.next = 96;
-                        break;
-
-                    case 90:
-                        _context.next = 92;
-                        return db.rand(gid, data.content);
-
-                    case 92:
-                        _r2 = _context.sent;
-
-                        if (!(_r2 !== undefined)) {
-                            _context.next = 96;
-                            break;
-                        }
-
-                        _context.next = 96;
-                        return api.GroupMessage(gid, _r2);
-
-                    case 96:
                     case 'end':
                         return _context.stop();
                 }
@@ -338,6 +123,275 @@ app.on('GroupMessage', function () {
 
     return function (_x) {
         return _ref.apply(this, arguments);
+    };
+}());
+
+app.on('GroupMemberDecrease', function () {
+    var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(data) {
+        var gid, qq, msg;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+                switch (_context2.prev = _context2.next) {
+                    case 0:
+                        gid = data.group;
+                        qq = data.beingOperateQQ;
+                        msg = 'QQ:[' + qq + '] ' + config.leave;
+                        _context2.next = 5;
+                        return api.GroupMessage(gid, msg);
+
+                    case 5:
+                    case 'end':
+                        return _context2.stop();
+                }
+            }
+        }, _callee2, undefined);
+    }));
+
+    return function (_x2) {
+        return _ref2.apply(this, arguments);
+    };
+}());
+
+app.on('GroupMessage', function () {
+    var _ref3 = _asyncToGenerator(regeneratorRuntime.mark(function _callee3(data) {
+        var gid, qq, msg, $, $1, $2, _$, _$2, _$3, _$4, _$5, _$6, r, _$7, _$8, _r, _r2;
+
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+            while (1) {
+                switch (_context3.prev = _context3.next) {
+                    case 0:
+                        gid = data.group;
+                        qq = data.fromQQ;
+                        msg = encrypt(data.content);
+
+                        if (!(config.ignore_qq.indexOf(qq) != -1)) {
+                            _context3.next = 5;
+                            break;
+                        }
+
+                        return _context3.abrupt('return', 'not check msg from ignored qq');
+
+                    case 5:
+                        if (!(data.content === '/help')) {
+                            _context3.next = 10;
+                            break;
+                        }
+
+                        _context3.next = 8;
+                        return api.GroupMessage(gid, MSG_HELP);
+
+                    case 8:
+                        _context3.next = 96;
+                        break;
+
+                    case 10:
+                        if (!add_reg.test(msg)) {
+                            _context3.next = 37;
+                            break;
+                        }
+
+                        $ = msg.match(add_reg);
+                        $1 = decrypt($[1]);
+                        $2 = decrypt($[2]);
+
+                        if (!(config.black_list.indexOf($1) != -1)) {
+                            _context3.next = 19;
+                            break;
+                        }
+
+                        _context3.next = 17;
+                        return api.GroupMessage(gid, add_b(qq, $1));
+
+                    case 17:
+                        _context3.next = 35;
+                        break;
+
+                    case 19:
+                        _context3.next = 21;
+                        return db.has(gid, $1, $2);
+
+                    case 21:
+                        if (!_context3.sent) {
+                            _context3.next = 26;
+                            break;
+                        }
+
+                        _context3.next = 24;
+                        return api.GroupMessage(gid, add_w(qq, $1, $2));
+
+                    case 24:
+                        _context3.next = 35;
+                        break;
+
+                    case 26:
+                        _context3.next = 28;
+                        return db.add(gid, $1, $2);
+
+                    case 28:
+                        if (!_context3.sent) {
+                            _context3.next = 33;
+                            break;
+                        }
+
+                        _context3.next = 31;
+                        return api.GroupMessage(gid, add_s(qq, $1, $2));
+
+                    case 31:
+                        _context3.next = 35;
+                        break;
+
+                    case 33:
+                        _context3.next = 35;
+                        return api.GroupMessage(gid, add_e(qq, $1, $2));
+
+                    case 35:
+                        _context3.next = 96;
+                        break;
+
+                    case 37:
+                        if (!del_reg.test(msg)) {
+                            _context3.next = 59;
+                            break;
+                        }
+
+                        _$ = msg.match(del_reg);
+                        _$2 = decrypt(_$[1]);
+                        _$3 = decrypt(_$[2]);
+                        _context3.next = 43;
+                        return db.has(gid, _$2, _$3);
+
+                    case 43:
+                        if (_context3.sent) {
+                            _context3.next = 48;
+                            break;
+                        }
+
+                        _context3.next = 46;
+                        return api.GroupMessage(gid, del_w(qq, _$2, _$3));
+
+                    case 46:
+                        _context3.next = 57;
+                        break;
+
+                    case 48:
+                        _context3.next = 50;
+                        return db.del(gid, _$2, _$3);
+
+                    case 50:
+                        if (!_context3.sent) {
+                            _context3.next = 55;
+                            break;
+                        }
+
+                        _context3.next = 53;
+                        return api.GroupMessage(gid, del_s(qq, _$2, _$3));
+
+                    case 53:
+                        _context3.next = 57;
+                        break;
+
+                    case 55:
+                        _context3.next = 57;
+                        return api.GroupMessage(gid, del_e(qq, _$2, _$3));
+
+                    case 57:
+                        _context3.next = 96;
+                        break;
+
+                    case 59:
+                        if (!get_reg.test(msg)) {
+                            _context3.next = 75;
+                            break;
+                        }
+
+                        _$4 = msg.match(get_reg);
+                        _$5 = decrypt(_$4[1]);
+                        _$6 = decrypt(_$4[2]);
+                        _context3.next = 65;
+                        return db.get(gid, _$6, _$5);
+
+                    case 65:
+                        r = _context3.sent;
+
+                        if (!(r === undefined)) {
+                            _context3.next = 71;
+                            break;
+                        }
+
+                        _context3.next = 69;
+                        return api.GroupMessage(gid, get_e(qq, _$6, _$5));
+
+                    case 69:
+                        _context3.next = 73;
+                        break;
+
+                    case 71:
+                        _context3.next = 73;
+                        return api.GroupMessage(gid, get_s(qq, _$6, _$5, r));
+
+                    case 73:
+                        _context3.next = 96;
+                        break;
+
+                    case 75:
+                        if (!list_reg.test(msg)) {
+                            _context3.next = 90;
+                            break;
+                        }
+
+                        _$7 = msg.match(list_reg);
+                        _$8 = decrypt(_$7[1]);
+                        _context3.next = 80;
+                        return db.list(gid, _$8);
+
+                    case 80:
+                        _r = _context3.sent;
+
+                        if (!(_r.length == 0)) {
+                            _context3.next = 86;
+                            break;
+                        }
+
+                        _context3.next = 84;
+                        return api.GroupMessage(gid, list_e(qq, _$8));
+
+                    case 84:
+                        _context3.next = 88;
+                        break;
+
+                    case 86:
+                        _context3.next = 88;
+                        return api.GroupMessage(gid, list_s(qq, _$8, _r));
+
+                    case 88:
+                        _context3.next = 96;
+                        break;
+
+                    case 90:
+                        _context3.next = 92;
+                        return db.rand(gid, data.content);
+
+                    case 92:
+                        _r2 = _context3.sent;
+
+                        if (!(_r2 !== undefined)) {
+                            _context3.next = 96;
+                            break;
+                        }
+
+                        _context3.next = 96;
+                        return api.GroupMessage(gid, _r2);
+
+                    case 96:
+                    case 'end':
+                        return _context3.stop();
+                }
+            }
+        }, _callee3, undefined);
+    }));
+
+    return function (_x3) {
+        return _ref3.apply(this, arguments);
     };
 }());
 
