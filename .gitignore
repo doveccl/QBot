@@ -1,6 +1,7 @@
 # custom
 *.DS_Store
 config.json
+.vscode
 bot.db
 
 # Logs
