@@ -25,7 +25,7 @@ let decrypt = str =>
         str.replace('~', '=')
     )
 
-const SHOW_MAX_RULES = 20
+const SHOW_MAX_RULES = 10
 const MSG_HELP = `QBot 使用帮助：
 /add key=value，为关键词 key 添加一条自动回复规则 value
 /del key=value，为关键词 key 删除一条自动回复规则 value
