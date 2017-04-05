@@ -76,7 +76,7 @@ try {
     config = {
         server_port: 11235,
         local_port: 11666,
-        ignore_qq: [1000000],
+        ignore_qq: ['1000000'],
         black_list: [],
         welcome: '欢迎加入本群！',
         leave: '离开了本群'
