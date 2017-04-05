@@ -10,6 +10,7 @@ let code = api.getCode()
 let at = q => code.getAt(q)
 
 let CQCode_reg = /\[[^\[]*\]/g
+let space_reg = /^\s*$/
 let add_reg = /^[/!]add ([^=]+)=([\S\s]+)$/
 let del_reg = /^[/!]del ([^=]+)=([\S\s]+)$/
 let get_reg = /^[/!]get#(\d+) ([^=]+)$/
@@ -113,6 +114,10 @@ app.on('GroupMessage', async data => {
         let $ = msg.match(add_reg)
         let $1 = decrypt($[1])
         let $2 = decrypt($[2])
+
+        if (space_reg.test($1) || space_reg.test($2)) {
+            return 'empty key or value is not allowed'
+        }
 
         if (config.black_list.indexOf($1) != -1) {
             await api.GroupMessage(gid, add_b(qq, $1))
