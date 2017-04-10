@@ -11,10 +11,11 @@ let at = q => code.getAt(q)
 
 let CQCode_reg = /\[[^\[]*\]/g
 let space_reg = /^\s*$/
-let add_reg = /^[/!]add ([^=]+)=([\S\s]+)$/
-let del_reg = /^[/!]del ([^=]+)=([\S\s]+)$/
-let get_reg = /^[/!]get#(\d+) ([^=]+)$/
-let list_reg = /^[/!]list ([\S\s]+)$/
+let help_reg = /^\s*[/!]help\s*$/
+let add_reg = /^\s*[/!]add ([^=]+)=([\S\s]+)$/
+let del_reg = /^\s*[/!]del ([^=]+)=([\S\s]+)$/
+let get_reg = /^\s*[/!]get#(\d+) ([^=]+)$/
+let list_reg = /^\s*[/!]list ([\S\s]+)$/
 
 let encrypt = str =>
     str.replace(CQCode_reg, str =>
@@ -39,8 +40,6 @@ let add_w = (q, k, v) =>
     `${at(q)} 规则 “${k}” => “${v}” 已经存在`
 let add_e = (q, k, v) =>
     `${at(q)} 规则 “${k}” => “${v}” 添加失败，请重试`
-let add_b = (q, k) =>
-    `${at(q)} 关键词 “${k}” 在黑名单中，不可添加`
 
 let del_s = (q, k, v) =>
     `${at(q)} 规则 “${k}” => “${v}” 删除成功`
@@ -108,20 +107,24 @@ app.on('GroupMessage', async data => {
         return 'not check msg from ignored qq'
     }
 
-    if (data.content === '/help') {
+    if (help_reg.test(msg)) {
         await api.GroupMessage(gid, MSG_HELP)
     } else if (add_reg.test(msg)) {
         let $ = msg.match(add_reg)
-        let $1 = decrypt($[1])
+        let $1 = decrypt($[1]).trim()
         let $2 = decrypt($[2])
 
         if (space_reg.test($1) || space_reg.test($2)) {
             return 'empty key or value is not allowed'
         }
 
-        if (config.black_list.indexOf($1) != -1) {
-            await api.GroupMessage(gid, add_b(qq, $1))
-        } else if (await db.has(gid, $1, $2)) {
+        for (let w of config.black_list) {
+            if ($1.indexOf(w) != -1 || $2.indexOf(w) != -1) {
+                return 'word blocked'
+            }
+        }
+
+        if (await db.has(gid, $1, $2)) {
             await api.GroupMessage(gid, add_w(qq, $1, $2))
         } else if (await db.add(gid, $1, $2)) {
             await api.GroupMessage(gid, add_s(qq, $1, $2))
@@ -130,8 +133,12 @@ app.on('GroupMessage', async data => {
         }
     } else if (del_reg.test(msg)) {
         let $ = msg.match(del_reg)
-        let $1 = decrypt($[1])
+        let $1 = decrypt($[1]).trim()
         let $2 = decrypt($[2])
+
+        if (space_reg.test($1) || space_reg.test($2)) {
+            return 'empty key or value is not allowed'
+        }
 
         if (! await db.has(gid, $1, $2)) {
             await api.GroupMessage(gid, del_w(qq, $1, $2))
@@ -143,7 +150,7 @@ app.on('GroupMessage', async data => {
     } else if (get_reg.test(msg)) {
         let $ = msg.match(get_reg)
         let $2 = decrypt($[1])
-        let $1 = decrypt($[2])
+        let $1 = decrypt($[2]).trim()
         let r = await db.get(gid, $1, $2)
 
         if (r === undefined) {
@@ -153,7 +160,7 @@ app.on('GroupMessage', async data => {
         }
     } else if (list_reg.test(msg)) {
         let $ = msg.match(list_reg)
-        let $1 = decrypt($[1])
+        let $1 = decrypt($[1]).trim()
         let r = await db.list(gid, $1)
 
         if (r.length == 0) {
